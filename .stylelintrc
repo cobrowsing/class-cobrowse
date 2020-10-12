@@ -1,0 +1,5 @@
+{
+  "extends": ["stylelint-prettier/recommended"],
+  "plugins": ["stylelint-prettier"],
+  "ignoreFiles": "extension/css/vendor/*.css"
+}

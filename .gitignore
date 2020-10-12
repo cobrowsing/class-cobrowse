@@ -1,0 +1,15 @@
+extension/buildSettings.js
+extension/manifest.json
+extension/**/*.js.map
+extension/vendor/
+*.swp
+*.tgz
+*~
+node_modules
+npm-debug.log
+web-ext-artifacts
+.DS_Store
+/Profile*
+manifest.json
+*.bundle.js
+package-lock.json
