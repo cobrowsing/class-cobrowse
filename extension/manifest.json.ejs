@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "Class Cobrowser",
+  "version": <%= env.VERSION || version %>,
+  "description": "Lead your class through the browser",
+  "developer": {
+    "name": "Ian Bicking",
+    "url": "https://www.ianbicking.org"
+  },
+  "icons": {
+    "64": "images/icon.svg"
+  },
+  "background": {
+    "scripts": [
+      "buildSettings.js",
+      "log.js",
+      "background/loadMain.js"
+    ]
+  },
+  "permissions": [
+    "<all_urls>",
+    "storage",
+    "tabs",
+    "clipboardRead",
+    "clipboardWrite"
+  ],
+  "browser_action": {
+    "browser_style": false,
+    "default_title": "Class Cobrowser",
+    "default_icon": "images/icon.svg",
+    "default_popup": "popup/popup.html"
+  }
+}

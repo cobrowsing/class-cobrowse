@@ -2,14 +2,14 @@ extension/buildSettings.js
 extension/manifest.json
 extension/**/*.js.map
 extension/vendor/
-*.swp
-*.tgz
-*~
+# Specific jsx build files:
+extension/popup/popup.js
+# Build files:
+/build/
 node_modules
 npm-debug.log
 web-ext-artifacts
 .DS_Store
 /Profile*
-manifest.json
 *.bundle.js
 package-lock.json
