@@ -13,3 +13,4 @@ web-ext-artifacts
 /Profile*
 *.bundle.js
 package-lock.json
+/gh-pages
