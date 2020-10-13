@@ -15,6 +15,12 @@ function render() {
   ReactDOM.render(<PopupController {...model} />, popupContainer);
 }
 
-render();
+async function init() {
+  const popupData = await browser.runtime.sendMessage({
+    type: "getPopupData",
+  });
+  Object.assign(model, popupData);
+  render();
+}
 
-console.log("loaded!");
+render();

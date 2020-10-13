@@ -20,6 +20,12 @@
       "background/loadMain.js"
     ]
   },
+  "content_scripts": [
+    {
+      "matches": ["*://ianb.github.io/*"],
+      "js": ["invite/invite.bundle.js"]
+    }
+  ],
   "permissions": [
     "<all_urls>",
     "storage",
