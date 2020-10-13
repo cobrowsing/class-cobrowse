@@ -1,1 +1,3 @@
 *.bundle.js
+extension/vendor/
+extension/popup/popup.js

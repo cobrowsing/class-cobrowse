@@ -12,7 +12,7 @@ function displayPath(p) {
   return p;
 }
 
-exports.writeFile = function(path, content, verbose = false) {
+exports.writeFile = function (path, content, verbose = false) {
   if (fs.existsSync(path)) {
     const existing = fs.readFileSync(path, { encoding: "UTF-8" });
     if (existing === content) {
@@ -28,7 +28,7 @@ exports.writeFile = function(path, content, verbose = false) {
   }
 };
 
-exports.copyFile = function(source, dest, verbose = false) {
+exports.copyFile = function (source, dest, verbose = false) {
   const existing = fs.readFileSync(source, { encoding: "UTF-8" });
   exports.writeFile(dest, existing, verbose);
 };

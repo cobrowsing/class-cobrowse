@@ -3,7 +3,7 @@
 
 "use strict";
 
-this.log = (function() {
+this.log = (function () {
   const exports = {};
 
   const logLevel = buildSettings.logLevel || "debug";
@@ -32,13 +32,13 @@ this.log = (function() {
   let TIMING_LOGS = [];
 
   if (shouldLog.debug) {
-    exports.startTiming = function(name) {
+    exports.startTiming = function (name) {
       TIMING_LOGS.push({ start: true, name, time: Date.now() });
       if (!window.isBackgroundPage) {
         queueTiming();
       }
     };
-    exports.timing = function(name) {
+    exports.timing = function (name) {
       TIMING_LOGS.push({ name, time: Date.now() });
       if (!window.isBackgroundPage) {
         queueTiming();
@@ -46,11 +46,11 @@ this.log = (function() {
     };
   }
 
-  exports.addTimings = function(timings) {
+  exports.addTimings = function (timings) {
     TIMING_LOGS = TIMING_LOGS.concat(timings);
   };
 
-  exports.getTimings = function() {
+  exports.getTimings = function () {
     TIMING_LOGS.sort((a, b) => {
       if (a.time < b.time) {
         return -1;

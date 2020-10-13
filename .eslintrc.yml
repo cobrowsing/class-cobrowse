@@ -1,6 +1,7 @@
 env:
   browser: true
   es6: true
+  node: true
   webextensions: true
 
 parser: babel-eslint
@@ -10,18 +11,18 @@ parserOptions:
     jsx: true
 
 extends:
+  - plugin:prettier/recommended
   - eslint:recommended
   - plugin:mozilla/recommended
   - plugin:jsx-a11y/recommended
-  - plugin:prettier/recommended
 
 plugins:
+  - prettier
   - mozilla
   - react
   - class-property
   - jsx-a11y
   - react-hooks
-  - prettier
 
 rules:
   eqeqeq: error
@@ -36,7 +37,7 @@ rules:
   react-hooks/exhaustive-deps: warn
   prettier/prettier:
     - error
-    - {}
     - fileInfoOptions:
         ignorePath: ".gitignore"
   jsx-a11y/no-onchange: off
+  space-before-function-paren: off

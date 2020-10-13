@@ -1,6 +1,6 @@
 const package_json = require(__dirname + "/../package.json");
 
-exports.getVersionNumber = function() {
+exports.getVersionNumber = function () {
   const BASELINE = 1567715368897; // Date.now() when this was first developed
   const timeDiff = Date.now() - BASELINE;
   const hours = Math.floor(timeDiff / 1000 / 60 / 60);

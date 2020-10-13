@@ -8,7 +8,7 @@ let written = 0;
 let unchanged = 0;
 const files = glob.sync(DIR + "/**/*.js");
 
-files.forEach(newPath => {
+files.forEach((newPath) => {
   const existingPath = path.join("./extension", path.relative(DIR, newPath));
   if (fs.existsSync(newPath) && fs.existsSync(existingPath)) {
     const newCode = fs.readFileSync(newPath, {
