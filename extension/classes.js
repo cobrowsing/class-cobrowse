@@ -6,19 +6,19 @@ let classes;
 
 export async function addClass(name, isTeacher) {
   classes.push({ name, isTeacher });
-  await browser.storage.local.save({ classes });
+  await browser.storage.local.set({ classes });
   addClassDb(name, isTeacher);
 }
 
 export async function initClasses() {
-  const classesResult = browser.storage.local.load(["classes"]);
+  const classesResult = browser.storage.local.get(["classes"]);
   classes = classesResult.classes || [];
   for (const cls of classes) {
     addClassDb(cls.name, cls.isTeacher);
   }
 }
 
-export async function getClasses() {
+export function getClasses() {
   return classes;
 }
 
