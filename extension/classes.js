@@ -24,7 +24,7 @@ export async function initClasses() {
   } else {
     myUserId = userIdResult.myUserId;
   }
-  const classesResult = browser.storage.local.get(["classes"]);
+  const classesResult = await browser.storage.local.get(["classes"]);
   classes = classesResult.classes || [];
   for (const cls of classes) {
     addClassDb(cls.name, cls.isTeacher);

@@ -54,19 +54,29 @@ class Classes extends React.Component {
 }
 
 class Class extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { copying: false };
+  }
   render() {
-    // FIXME: change invite to copy the URL
-    const url =
-      "https://ianb.github.io/class-cobrowse/invite/?class=" +
-      encodeURIComponent(this.props.classId);
     return (
       <div>
         {this.props.title}{" "}
-        <a href={url} target="_blank">
-          invite
-        </a>
+        <button type="button" onClick={this.onCopy.bind(this)}>
+          {this.state.copying ? "copied" : "copy invite"}
+        </button>
       </div>
     );
+  }
+  onCopy() {
+    const url =
+      "https://ianb.github.io/class-cobrowse/invite/?class=" +
+      encodeURIComponent(this.props.classId);
+    navigator.clipboard.writeText(url);
+    this.setState({ copying: true });
+    setTimeout(() => {
+      this.setState({ copying: false });
+    }, 1000);
   }
 }
 
