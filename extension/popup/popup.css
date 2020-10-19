@@ -2,3 +2,8 @@ html,
 body {
   font-family: sans-serif;
 }
+
+#container {
+  min-height: 20em;
+  min-width: 40em;
+}

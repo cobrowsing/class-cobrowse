@@ -4,7 +4,7 @@ export default function makeId() {
     .replace("+", "-")
     .replace("/", "_")
     .replace("=", "");
-  return `u-${name.replace("=", "")}`;
+  return `${name.replace("=", "")}`;
 }
 
 function arrayBufferToBase64(buffer) {

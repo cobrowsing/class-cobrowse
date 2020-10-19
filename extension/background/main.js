@@ -10,7 +10,7 @@ browser.runtime.onMessage.addListener((message) => {
     case "inviteAccepted":
       return inviteAccepted(message.className);
     case "createClass":
-      return createClass();
+      return createClass(message.name);
     default:
       log.error("Unexpected message:", message.type);
       break;
@@ -28,9 +28,11 @@ async function inviteAccepted(className) {
   return addClass(className, false);
 }
 
-async function createClass() {
-  const className = makeId();
-  await addClass(className, true);
+async function createClass(name) {
+  name = name.replace(/\s+/g, "_");
+  name = name.replace(/[^a-zA-Z0-9_]/g, "");
+  const classId = name + "." + makeId();
+  await addClass(classId, true);
   await reinitPopup();
 }
 
