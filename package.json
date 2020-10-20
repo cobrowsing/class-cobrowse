@@ -52,7 +52,7 @@
     "web-ext": "^4.2.0"
   },
   "dependencies": {
-    "firebase": "^7.24.0",
+    "pubnub": "^4.29.9",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"
   },
@@ -71,7 +71,7 @@
     "test": "npm-run-all build:manifest lint jest",
     "jest": "jest",
     "build": "npm-run-all build:* package-prod",
-    "build:deps": "mkdir -p extension/vendor/ ; for file in react/umd/react.production.min.js react-dom/umd/react-dom.production.min.js firebase/firebase-app.js firebase/firebase-firestore.js firebase/firebase-analytics.js ; do cp node_modules/$file extension/vendor/ ; done",
+    "build:deps": "mkdir -p extension/vendor/ ; for file in react/umd/react.production.min.js react-dom/umd/react-dom.production.min.js pubnub/dist/web/pubnub.js ; do cp node_modules/$file extension/vendor/ ; done",
     "build:manifest": "node bin/substitute-manifest.js",
     "build:jsx": "babel --relative --out-dir ../build --only '**/*.jsx' extension/ && node bin/move-changed-build-files.js",
     "build:rollup": "./bin/rollup-content-scripts.js",

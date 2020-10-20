@@ -155,7 +155,10 @@ class ActiveClass extends React.Component {
   render() {
     return (
       <div>
-        Running class: <strong>{this.props.activeClass.classTitle}</strong>
+        {this.props.activeClass.isTeacher
+          ? "Running class:"
+          : "Following class:"}
+        <strong>{this.props.activeClass.classTitle}</strong>
       </div>
     );
   }

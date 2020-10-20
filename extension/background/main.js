@@ -68,7 +68,27 @@ async function startClass(classId) {
   }
   const activeClass = (activeClassesById[classId] = new ActiveClass(
     classId,
-    activeTab.id
+    activeTab.id,
+    true
+  ));
+  await activeClass.activate();
+  await reinitPopup();
+}
+
+async function startClassOnDemand(classId) {
+  if (activeClassesById[classId]) {
+    log.warn("Restarting a class we're already in:", classId);
+    await browser.tabs.update(activeClassesById[classId].tabId, {
+      active: true,
+    });
+    return;
+  }
+  // Called when a class is started remotely
+  const tab = await browser.tabs.create({ active: true });
+  const activeClass = (activeClassesById[classId] = new ActiveClass(
+    classId,
+    tab.id,
+    false
   ));
   await activeClass.activate();
   await reinitPopup();
@@ -78,11 +98,12 @@ const activeClassesById = {};
 const activeClassesByTabId = {};
 
 class ActiveClass {
-  constructor(classId, tabId) {
+  constructor(classId, tabId, isTeacher) {
     this.classId = classId;
     this.tabId = tabId;
     this.onUpdated = this.onUpdated.bind(this);
     this.lastTabUpdate = {};
+    this.isTeacher = isTeacher;
   }
 
   async onUpdated(tabId, changeInfo, tab) {
@@ -92,11 +113,13 @@ class ActiveClass {
     ) {
       this.lastTabUpdate.url = changeInfo.url || this.lastTabUpdate.url;
       this.lastTabUpdate.title = changeInfo.title || this.lastTabUpdate.title;
-      await sendCommand(this.classId, {
-        type: "tabUpdate",
-        url: this.lastTabUpdate.url,
-        title: this.lastTabUpdate.title,
-      });
+      if (this.isTeacher) {
+        await sendCommand(this.classId, {
+          type: "tabUpdate",
+          url: this.lastTabUpdate.url,
+          title: this.lastTabUpdate.title,
+        });
+      }
     }
   }
 
@@ -104,7 +127,7 @@ class ActiveClass {
     await sendCommand(this.classId, {
       type: "classStarting",
     });
-    browser.tabs.update(this.tabId, { pinned: true });
+    browser.tabs.update(this.tabId, { pinned: this.isTeacher });
     browser.tabs.onUpdated.addListener(this.onUpdated, { tabId: this.tabId });
     browser.browserAction.setIcon({
       path: "images/icon-active.svg",
@@ -133,32 +156,56 @@ class ActiveClass {
     delete activeClassesByTabId[this.tabId];
   }
 
-  executeCommand(command) {
-    log.info("Would execute command", command);
+  async executeCommand(command) {
+    const methodName = `action_${command.type}`;
+    if (!this[methodName]) {
+      log.warn("Unimplemented command type:", command.type, command);
+      return undefined;
+    }
+    return this[methodName](command);
+  }
+
+  async action_tabUpdate(command) {
+    const tab = await browser.tabs.get(this.tabId);
+    if (tab.url !== command.url) {
+      await browser.tabs.update(this.tabId, { url: command.url });
+    }
   }
 
   toJSON() {
     return {
       classId: this.classId,
       classTitle: getTitleFromId(this.classId),
+      isTeacher: this.isTeacher,
     };
   }
 }
 
-registerOnCommand((classId, isTeacher, command) => {
+registerOnCommand(async (classId, command) => {
+  if (command.type === "classStarting") {
+    await startClassOnDemand(classId, command);
+  }
   const c = activeClassesById[classId];
   if (!c) {
     throw new Error(`Incoming message to unexpected class: ${classId}`);
   }
-  c.executeCommand(command).catch((e) => {
-    log.warn("Error in executeCommand:", e);
-  });
+  await c.executeCommand(command);
 });
 
 async function reinitPopup() {
-  await browser.runtime.sendMessage({
-    type: "reinitPopup",
-  });
+  try {
+    await browser.runtime.sendMessage({
+      type: "reinitPopup",
+    });
+  } catch (e) {
+    if (
+      !e.message.includes(
+        "Could not establish connection. Receiving end does not exist"
+      )
+    ) {
+      throw e;
+    }
+  }
 }
 
 initClasses();

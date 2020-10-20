@@ -1,7 +1,17 @@
-/* globals firebase, buildSettings */
+/* globals PubNub, buildSettings */
 
-firebase.initializeApp(buildSettings.firebaseConfig);
-// FIXME: need to fix CSP for analytics:
-// firebase.analytics();
+let _userId;
 
-export const firebaseDb = firebase.firestore();
+const result = localStorage.getItem("userId");
+if (result) {
+  _userId = result;
+} else {
+  _userId = PubNub.generateUUID();
+  localStorage.setItem("userId", _userId);
+}
+
+export const pubnub = new PubNub(
+  Object.assign({ uuid: _userId }, buildSettings.pubnubConfig)
+);
+
+export const userId = _userId;
