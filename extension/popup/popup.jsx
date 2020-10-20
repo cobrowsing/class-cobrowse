@@ -6,6 +6,9 @@ const model = {};
 
 class PopupController extends React.Component {
   render() {
+    if (model.activeClass) {
+      return <ActiveClass activeClass={model.activeClass} />;
+    }
     if (model.creatingClass) {
       return <ClassCreator />;
     }
@@ -58,6 +61,7 @@ class Class extends React.Component {
     super(props);
     this.state = { copying: false };
   }
+
   render() {
     return (
       <div>
@@ -65,9 +69,15 @@ class Class extends React.Component {
         <button type="button" onClick={this.onCopy.bind(this)}>
           {this.state.copying ? "copied" : "copy invite"}
         </button>
+        {this.props.isTeacher ? (
+          <button type="button" onClick={this.onStart.bind(this)}>
+            start class
+          </button>
+        ) : null}
       </div>
     );
   }
+
   onCopy() {
     const url =
       "https://ianb.github.io/class-cobrowse/invite/?class=" +
@@ -77,6 +87,13 @@ class Class extends React.Component {
     setTimeout(() => {
       this.setState({ copying: false });
     }, 1000);
+  }
+
+  async onStart() {
+    await browser.runtime.sendMessage({
+      type: "startClass",
+      classId: this.props.classId,
+    });
   }
 }
 
@@ -134,6 +151,16 @@ class ClassCreator extends React.Component {
   }
 }
 
+class ActiveClass extends React.Component {
+  render() {
+    return (
+      <div>
+        Running class: <strong>{this.props.activeClass.classTitle}</strong>
+      </div>
+    );
+  }
+}
+
 function render() {
   const popupContainer = document.getElementById("container");
   ReactDOM.render(<PopupController {...model} />, popupContainer);
@@ -148,6 +175,7 @@ async function init() {
 }
 
 browser.runtime.onMessage.addListener((message) => {
+  console.log("incoming popup message", message);
   switch (message.type) {
     case "reinitPopup":
       return init();

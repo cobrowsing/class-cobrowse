@@ -4,7 +4,7 @@ function init() {
   accept.addEventListener("click", () => {
     browser.runtime.sendMessage({
       type: "inviteAccepted",
-      className: params.get("class"),
+      classId: params.get("class"),
     });
   });
 }

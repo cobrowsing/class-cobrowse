@@ -6,11 +6,14 @@ import makeId from "./makeId.js";
 let classes;
 let myUserId;
 
-function getTitleFromId(classId) {
+export function getTitleFromId(classId) {
   return classId.replace(/\.[^\.]*$/, "").replace(/_/g, " ");
 }
 
 export async function addClass(classId, isTeacher) {
+  if (!classId || typeof classId !== "string") {
+    throw new Error(`Bad classId: ${classId}`);
+  }
   classes.push({ title: getTitleFromId(classId), classId, isTeacher });
   await browser.storage.local.set({ classes });
   addClassDb(classId, isTeacher);
@@ -27,7 +30,7 @@ export async function initClasses() {
   const classesResult = await browser.storage.local.get(["classes"]);
   classes = classesResult.classes || [];
   for (const cls of classes) {
-    addClassDb(cls.name, cls.isTeacher);
+    addClassDb(cls.classId, cls.isTeacher);
   }
 }
 
@@ -48,6 +51,7 @@ function addClassDb(classId, isTeacher) {
       async (snapshot) => {
         const items = [];
         snapshot.forEach((doc) => items.push(doc));
+        console.log("got snapshot", snapshot, items);
         for (const doc of items) {
           const data = doc.data();
           try {
@@ -80,12 +84,26 @@ function addClassDb(classId, isTeacher) {
 }
 
 async function executeCommand(classId, isTeacher, command) {
+  if (command.userId === myUserId) {
+    return;
+  }
   log.info(
     "Received command from class:",
     getTitleFromId(classId),
     "->",
     command
   );
+  if (_onCommand) {
+    _onCommand(classId, isTeacher, command);
+  }
+}
+
+let _onCommand;
+export function registerOnCommand(callback) {
+  if (_onCommand) {
+    throw new Error("Double register");
+  }
+  _onCommand = callback;
 }
 
 export async function sendCommand(classId, command) {
@@ -101,7 +119,7 @@ export async function sendCommand(classId, command) {
   command.userId = myUserId;
   command.created = Date.now();
   await firebaseDb
-    .collection("commands")
+    .collection("classes")
     .doc(classId)
     .collection("inbox")
     .doc("C" + Date.now())
